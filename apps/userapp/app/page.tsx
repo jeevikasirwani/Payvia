@@ -1,12 +1,12 @@
-import React from 'react'
-import  {PrismaClient}  from '../../../packages/db/generated/prisma'
+"use client"
+import { signIn, signOut, useSession } from "next-auth/react";
+import { Appbar } from "@repo/ui/appbar";
 
-const prisma = new PrismaClient();
-
-function Page() {
+export default function Page(): JSX.Element {
+  const session = useSession();
   return (
-    <div className='text-2xl'>page</div>
-  )
+   <div>
+      <Appbar onSignin={signIn} onSignout={signOut} user={session.data?.user} />
+   </div>
+  );
 }
-
-export default Page

@@ -10,9 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@repo/db":"*",
+    "@repo/db": "*",
     "@types/express": "^5.0.3",
     "esbuild": "^0.25.5",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "zod": "^3.25.67"
   }
 }

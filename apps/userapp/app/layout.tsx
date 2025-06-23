@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import PrismaClient from "@prisma/client";
+import PrismaClient from "@repo/db";
 import { Providers } from "../provider";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

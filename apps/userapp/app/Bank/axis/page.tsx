@@ -1,8 +1,9 @@
 import React from 'react'
+import AxisTransactionPage from '../../../components/AxisBank'
 
 function page() {
   return (
-    <div>axis</div>
+    <div><AxisTransactionPage/></div>
   )
 }
 

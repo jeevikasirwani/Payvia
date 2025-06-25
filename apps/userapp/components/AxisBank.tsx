@@ -3,10 +3,10 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Loader2 } from "lucide-react";
-import hdfc from "../assets/HDFC_Bank_Logo.svg";
+import axis from "../assets/Axis_Bank_logo.svg";
 import { createOnRampTransaction } from "../app/lib/actions/onramptran";
 
-export default function HDFCTransactionPage() {
+export default function AxisTransactionPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isComplete, setIsComplete] = useState(false);
   const [message, setMessage] = useState("");
@@ -20,12 +20,16 @@ export default function HDFCTransactionPage() {
         const urlParams = new URLSearchParams(window.location.search);
         const amount = urlParams.get("amount");
         if (amount) {
-          const numericAmount = parseFloat(amount);
-          if (numericAmount < 1 || numericAmount > 10000) {
-            setMessage("Transaction amount should be between 1 and 10000.");
-            setIsComplete(false);
+          const numericAmount = parseFloat(
+            (parseFloat(amount) * 100).toString(),
+          );
+          if (numericAmount <= 0) {
+            setMessage("Transaction amount must be greater than zero.");
+          } else if (numericAmount > 1000000) {
+            // Example limit
+            setMessage("Transaction amount exceeds the limit.");
           } else {
-            await createOnRampTransaction("HDFC Bank", numericAmount);
+            await createOnRampTransaction( "Axis Bank",numericAmount);
             setIsComplete(true);
             setMessage("Transaction completed successfully");
           }
@@ -44,34 +48,28 @@ export default function HDFCTransactionPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      <header className="bg-[#004C8F] text-white p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <Image
-            src={hdfc}
-            alt="HDFC Bank Logo"
-            width={120}
-            height={40}
-            className=""
-          />
+      <header className="bg-[#97144D] text-white p-4">
+        <div className="container mx-auto flex justify-between items-center h-10">
+          <Image src={axis} alt="Axis Bank Logo" width={120} className="pt-4" />
           <nav>
             <ul className="flex space-x-4 text-sm">
-              <li>Home</li>
-              <li>Accounts</li>
-              <li>Payments</li>
-              <li>Customer Service</li>
+              <li>Personal</li>
+              <li>Corporate</li>
+              <li>NRI</li>
+              <li>Priority</li>
             </ul>
           </nav>
         </div>
       </header>
       <main className="flex-grow container mx-auto mt-8 p-4 flex items-center justify-center">
         <div className="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
-          <h1 className="text-2xl font-bold text-[#004C8F] mb-6 text-center">
+          <h1 className="text-2xl font-bold text-[#97144D] mb-6 text-center">
             Transaction Processing
           </h1>
           {isLoading ? (
             <div className="flex flex-col items-center justify-center space-y-4 py-8">
-              <Loader2 className="h-16 w-16 animate-spin text-[#004C8F]" />
-              <p className="text-lg font-semibold text-[#004C8F]">
+              <Loader2 className="h-16 w-16 animate-spin text-[#97144D]" />
+              <p className="text-lg font-semibold text-[#97144D]">
                 Processing your transaction...
               </p>
               <p className="text-sm text-gray-600">
@@ -98,8 +96,8 @@ export default function HDFCTransactionPage() {
               </h2>
               <p className="text-lg">{message}</p>
               <p className="text-sm text-gray-600">
-                Transaction ID: HDFC
-                {Math.random().toString(36).substring(2, 11).toUpperCase()}
+                Transaction ID: AXIS
+                {Math.random().toString(36).substr(2, 9).toUpperCase()}
               </p>
             </div>
           ) : (
@@ -122,16 +120,16 @@ export default function HDFCTransactionPage() {
               </h2>
               <p className="text-lg">{message}</p>
               <p className="text-sm text-gray-600">
-                Please try again or contact customer support.
+                Please try again or contact our customer support.
               </p>
             </div>
           )}
         </div>
       </main>
-      <footer className="bg-[#004C8F] text-white text-sm p-4 mt-8">
+      <footer className="bg-[#97144D] text-white text-sm p-4 mt-8">
         <div className="container mx-auto text-center">
-          © 2023 HDFC Bank Ltd. All rights reserved. | Terms and Conditions |
-          Privacy Policy
+          © 2023 Axis Bank Ltd. All rights reserved. | Terms of Use | Privacy
+          Policy
         </div>
       </footer>
     </div>

@@ -1,8 +1,9 @@
 import React from 'react'
+import HdfcBank from '../../../components/HdfcBank'
 
 function page() {
   return (
-    <div>hdfc</div>
+    <div><HdfcBank/></div>
   )
 }
 

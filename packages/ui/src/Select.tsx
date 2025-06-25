@@ -1,4 +1,11 @@
 'use client'
+import { JetBrains_Mono } from "next/font/google";
+
+
+const jetbrainsMono = JetBrains_Mono({
+  weight: ["400", "600"],
+  subsets: ["latin"],
+});
 export const Select=({
     options,
     onSelect
@@ -9,8 +16,8 @@ export const Select=({
     return(
         <div>
             <select  onChange={(e) => onSelect(e.target.value)}
-        className="bg-pink-100 border border-indigo-300 text-gray-900 
-        text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5">
+        className={`${jetbrainsMono.className} bg-indigo-100 border border-indigo-500 text-gray-900 
+        text-sm rounded-lg focus:ring-indigo-700 focus:border-indigo-700 block w-full p-2.5`}>
             {options.map((option)=>(
                 <option key={option.key} value={option.value}>{option.value}</option>
             ))}

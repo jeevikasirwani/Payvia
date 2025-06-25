@@ -1,17 +1,20 @@
 import db from "@repo/db/client";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
-import {z} from "zod";
-import { NextAuthOptions,Session,User } from "next-auth";
-import {JWT} from 'next-auth/jwt';
-import session from 'next-auth';
+import { z } from "zod";
+import { NextAuthOptions, Session, User } from "next-auth";
+import { JWT } from "next-auth/jwt";
 
-const crediantialSchema=z.object({
-    phone:z.string() .min(10, "Phone number must be at least 10 digits")
+const crediantialSchema = z.object({
+  phone: z
+    .string()
+    .min(10, "Phone number must be at least 10 digits")
     .max(15, "Phone number too long")
     .regex(/^\d+$/, "Phone number must contain only digits"),
-    password:z.string().min(6,"Password must be at least 6 characters")
-    .max(100,"Password too long")
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .max(100, "Password too long"),
 });
 
 declare module "next-auth" {
@@ -20,9 +23,9 @@ declare module "next-auth" {
       id: string;
       name?: string | null;
       email?: string | null;
-    }
+    };
   }
-  
+
   interface User {
     id: string;
     name?: string | null;
@@ -36,8 +39,7 @@ declare module "next-auth/jwt" {
   }
 }
 
-
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -50,8 +52,8 @@ export const authOptions = {
         },
         password: { label: "Password", type: "password", required: true },
       },
-      
-async authorize(credentials): Promise<User | null> {
+
+      async authorize(credentials): Promise<User | null> {
         // Validate credentials exist
         if (!credentials?.phone || !credentials?.password) {
           return null;
@@ -61,7 +63,7 @@ async authorize(credentials): Promise<User | null> {
         try {
           const validatedCredentials = crediantialSchema.parse({
             phone: credentials.phone,
-            password: credentials.password
+            password: credentials.password,
           });
 
           const existingUser = await db.user.findFirst({
@@ -76,7 +78,7 @@ async authorize(credentials): Promise<User | null> {
               validatedCredentials.password,
               existingUser.password
             );
-            
+
             if (passwordValidation) {
               return {
                 id: existingUser.id.toString(),
@@ -88,8 +90,11 @@ async authorize(credentials): Promise<User | null> {
           } else {
             // Create new user
             try {
-              const hashedPassword = await bcrypt.hash(validatedCredentials.password, 10);
-              
+              const hashedPassword = await bcrypt.hash(
+                validatedCredentials.password,
+                10
+              );
+
               const user = await db.user.create({
                 data: {
                   number: validatedCredentials.phone,
@@ -120,7 +125,13 @@ async authorize(credentials): Promise<User | null> {
   ],
   secret: process.env.NEXTAUTH_SECRET || process.env.JWT_SECRET || "secret",
   callbacks: {
-    async session({ token, session }: { token: JWT; session: Session }): Promise<Session> {
+    async session({
+      token,
+      session,
+    }: {
+      token: JWT;
+      session: Session;
+    }): Promise<Session> {
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
@@ -134,10 +145,9 @@ async authorize(credentials): Promise<User | null> {
     },
   },
   pages: {
-    signIn: '/auth/signin',
-    // signUp: '/auth/signup', // if you have a custom signup page
+    signIn: "/auth/signin",
   },
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as const, // Fix: Explicitly type as const
   },
 };

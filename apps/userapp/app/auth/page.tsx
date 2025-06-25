@@ -108,7 +108,7 @@ export default function LoginSignup() {
           <div className="flex items-center space-x-2 text-sm text-indigo-500">
             <NotebookPen className="w-4 h-4" />
             <p className={`${jetbrainsMono.className}`}>
-              Demo : Phone: 123456, Password: 123456
+              Demo : Phone: 1234567890, Password: 1234567890
             </p>
           </div>
           <button

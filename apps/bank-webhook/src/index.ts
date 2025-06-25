@@ -7,35 +7,79 @@ const hdfcWebhookSchema = z.object({
   user_identifier: z.number().min(1, "User identifier is required"),
   amount: z.number().positive("Amount must be positive"),
 });
+
+// for pending transactions
+
+async function processPendingTransactions() {
+  try {
+    const pendingT = await db.onRampTransaction.findMany({
+      where: { status: "Processing" },
+    });
+
+    for (const transaction of pendingT) {
+      await db.$transaction([
+        db.balance.update({
+          where: { userId: transaction.userId },
+          data: {
+            amount: {
+              increment: transaction.amount,
+            },
+          },
+        }),
+        db.onRampTransaction.update({
+          where: { id: transaction.id },
+          data: { status: "Success" },
+        }),
+      ]);
+    }
+
+    console.log(`Processed ${pendingT.length} pending transactions.`);
+  } catch (error) {
+    console.error("Error processing pending transactions:", error);
+  }
+}
+
+// for new transactions
 app.post("/hdfcWebhook", async (req, res) => {
   //TODO: Add zod validation here?
-  const validatedData = hdfcWebhookSchema.parse(req.body);
+  const validatedData = hdfcWebhookSchema.safeParse(req.body);
+
+  if (!validatedData.success) {
+    res.status(400).send(validatedData.error);
+    return;
+  }
 
   const paymentInformation = {
-    token: validatedData.token,
-    userId: validatedData.user_identifier,
-    amount: validatedData.amount,
+    token: req.body.token,
+    userId: req.body.user_identifier,
+    amount: req.body.amount,
   };
-  db.balance.update({
-    where: {
-      userId: paymentInformation.userId,
-    },
-    data: {
-      amount: {
-        increment: paymentInformation.amount,
+
+  try {
+    db.balance.update({
+      where: {
+        userId: paymentInformation.userId,
       },
-    },
-  });
-  await db.onRampTransaction.update({
-    where: {
-      token: paymentInformation.token,
-    },
-    data: {
-      status: "Success",
-    },
-  });
-  res.json({
-    message: "captured",
-  });
+      data: {
+        amount: {
+          increment: paymentInformation.amount,
+        },
+      },
+    });
+    await db.onRampTransaction.update({
+      where: {
+        token: paymentInformation.token,
+      },
+      data: {
+        status: "Success",
+      },
+    });
+    res.json({
+      message: "captured",
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(411).json({ message: "Error while payment" });
+  }
   // Update balance in db, add txn
 });

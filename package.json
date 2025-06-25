@@ -25,6 +25,11 @@
     "packages/*"
   ],
   "dependencies": {
-    "@prisma/client": "^6.10.1"
+    "@hugeicons/react": "^1.0.5",
+    "@prisma/client": "^6.10.1",
+    "framer-motion": "^12.19.1",
+    "lucide-react": "^0.523.0",
+    "motion": "^12.19.1",
+    "react-toastify": "^11.0.5"
   }
 }

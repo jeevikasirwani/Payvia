@@ -1,7 +1,7 @@
 import db from "@repo/db/client";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
-import {z} from zod;
+import {z} from "zod";
 import { NextAuthOptions,Session,User } from "next-auth";
 import {JWT} from 'next-auth/jwt';
 import session from 'next-auth';

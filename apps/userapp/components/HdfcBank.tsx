@@ -18,12 +18,26 @@ export default function HdfcBank(){
         try{
             const urlParams = new URLSearchParams(window.location.search);
         const amount = urlParams.get("amount");
+        if(amount){
+            const Namount=parseFloat(amount);
+            if(Namount <1 || Namount>100000){
+                 setMessage("Transaction amount should be between 1 and 10000.");
+            setIscomplete(false);
+            }else{
+                  setMessage("Invalid transaction amount.");
+            }
+
         }
-      }
+
+        }catch(error){
+            setMessage("Transaction Failed");
+        }
+        finally{
+            setIsLoading(false);
+        }
+      };
     
-      return () => {
-        second
-      }
-    }, [third])
+      processT();
+    }, [createOnRampTransaction])
     
 }

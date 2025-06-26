@@ -3,7 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "./*": "./src/*.tsx"
+    "./appbar": "./src/Appbar.tsx",
+    "./textinput": "./src/TextInput.tsx",
+    "./select": "./src/Select.tsx",
+    "./center": "./src/Center.tsx",
+    "./button": "./src/button.tsx",
+    "./code": "./src/code.tsx",
+    "./card": "./src/card.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -11,7 +17,6 @@
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {
-    
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "@turbo/gen": "^2.5.0",

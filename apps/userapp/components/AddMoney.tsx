@@ -1,4 +1,3 @@
-
 "use client";
 import React from "react";
 import { useState } from "react";
@@ -41,7 +40,9 @@ function AddMoney() {
             placeholder="Amount"
             onChange={(val) => setValue(Number(val))}
           />
-          <div className={`${jetbrainsMono.className} py-4 text-left`}>Bank</div>
+          <div className={`${jetbrainsMono.className} py-4 text-left`}>
+            Bank
+          </div>
           <Select
             onSelect={(value) => {
               setProvider(
@@ -61,31 +62,40 @@ function AddMoney() {
                 if (isLoading) {
                   return;
                 }
-                
+
                 if (value <= 0) {
                   alert("Please enter a valid amount");
                   return;
                 }
-                
+
                 setIsLoading(true);
-                
+
                 try {
                   // Create the transaction
                   const result = await createOnRampTransaction(provider, value);
-                  
+
                   console.log("Transaction result:", result); // Debug log
-                  
+
                   // Check for success - the server action returns { success: true/false, message: string }
                   if (result && result.success === true) {
                     // Redirect to bank page
                     if (provider === "HDFC Bank") {
-                      window.open(`/Bank/hdfc?amount=${value}&token=${result.token || 'default'}`, "_blank");
+                      window.open(
+                        `/Bank/hdfc?amount=${value}&token=${result.token || "default"}`,
+                        "_blank"
+                      );
                     } else if (provider === "Axis Bank") {
-                      window.open(`/Bank/axis?amount=${value}&token=${result.token || 'default'}`, "_blank");
+                      window.open(
+                        `/Bank/axis?amount=${value}&token=${result.token || "default"}`,
+                        "_blank"
+                      );
                     }
                   } else {
                     // Show error message
-                    alert("Failed to initiate transaction: " + (result?.message || "Unknown error"));
+                    alert(
+                      "Failed to initiate transaction: " +
+                        (result?.message || "Unknown error")
+                    );
                   }
                 } catch (error) {
                   console.error("Error:", error);

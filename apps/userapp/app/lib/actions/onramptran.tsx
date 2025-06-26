@@ -21,7 +21,7 @@ export async function createOnRampTransaction(provider: string, amount: number) 
     
     try {
         // Use a database transaction to ensure atomicity
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx:any) => {
             // Create the onramp transaction with Success status
             await tx.onRampTransaction.create({
                 data: {

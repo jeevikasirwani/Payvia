@@ -30,17 +30,24 @@ export default function LoginSignup() {
     });
     setIsLoading(false);
 
-    if (res?.status === 201) {
-      toast.success(
-        "Welcome to PayVia! Your account has been created successfully."
-      );
-      router.push("/dashboard");
-    } else if (res?.status === 200) {
-      toast.success("You've successfully logged in to your PayVia account.");
+    // if (res?.status === 201) {
+    //   toast.success(
+    //     "Welcome to PayVia! Your account has been created successfully."
+    //   );
+    //   router.push("/dashboard");
+    // } else if (res?.status === 200) {
+    //   toast.success("You've successfully logged in to your PayVia account.");
+    //   router.push("/dashboard");
+    // }
+    if (res?.ok) {  // ✅ Check for success
+      toast.success("Successfully logged in to PayVia!");
       router.push("/dashboard");
     } else {
       setError("Invalid phone number or password. Please try again.");
     }
+    //  else {
+    //   setError("Invalid phone number or password. Please try again.");
+    // }
   };
 
   return (

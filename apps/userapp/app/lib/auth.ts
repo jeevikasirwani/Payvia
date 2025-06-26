@@ -1,4 +1,4 @@
-import db from "@repo/db/client";
+import db from "@repo/db";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { z } from "zod";
@@ -145,7 +145,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/auth/signin",
+    signIn: "/auth",
   },
   session: {
     strategy: "jwt" as const, // Fix: Explicitly type as const

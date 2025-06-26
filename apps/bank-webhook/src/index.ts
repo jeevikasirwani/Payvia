@@ -54,32 +54,43 @@ app.post("/hdfcWebhook", async (req, res) => {
     userId: req.body.user_identifier,
     amount: req.body.amount,
   };
-
   try {
-    db.balance.update({
-      where: {
-        userId: paymentInformation.userId,
-      },
-      data: {
-        amount: {
-          increment: paymentInformation.amount,
+    // Use a database transaction to ensure atomicity
+    await db.$transaction(async (tx) => {
+      // First, upsert the balance (create if doesn't exist, update if exists)
+      await tx.balance.upsert({
+        where: {
+          userId: paymentInformation.userId,
         },
-      },
+        update: {
+          amount: {
+            increment: paymentInformation.amount,
+          },
+        },
+        create: {
+          userId: paymentInformation.userId,
+          amount: paymentInformation.amount,
+          locked: 0,
+        },
+      });
+
+      // Then update the transaction status
+      await tx.onRampTransaction.update({
+        where: {
+          token: paymentInformation.token,
+        },
+        data: {
+          status: "Success",
+        },
+      });
     });
-    await db.onRampTransaction.update({
-      where: {
-        token: paymentInformation.token,
-      },
-      data: {
-        status: "Success",
-      },
-    });
+
+    console.log(`Transaction ${paymentInformation.token} processed successfully`);
     res.json({
       message: "captured",
     });
   } catch (e) {
-    console.log(e);
-    res.status(411).json({ message: "Error while payment" });
+    console.error("Error processing payment:", e);
+    res.status(411).json({ message: "Error while processing payment" });
   }
-  // Update balance in db, add txn
 });

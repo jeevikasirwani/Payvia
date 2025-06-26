@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -10,41 +11,59 @@ export default function AxisTransactionPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isComplete, setIsComplete] = useState(false);
   const [message, setMessage] = useState("");
+  const [transactionId, setTransactionId] = useState("");
   const transactionProcessed = useRef(false);
 
   useEffect(() => {
     const processTransaction = async () => {
       if (transactionProcessed.current) return;
       transactionProcessed.current = true;
+      
       try {
         const urlParams = new URLSearchParams(window.location.search);
         const amount = urlParams.get("amount");
+        
         if (amount) {
-          const numericAmount = parseFloat(
-            (parseFloat(amount) * 100).toString(),
-          );
+          const numericAmount = parseFloat(amount);
+          
+          // Validate amount
           if (numericAmount <= 0) {
             setMessage("Transaction amount must be greater than zero.");
-          } else if (numericAmount > 1000000) {
-            // Example limit
-            setMessage("Transaction amount exceeds the limit.");
+            setIsComplete(false);
+          } else if (numericAmount > 10000) {
+            setMessage("Transaction amount exceeds the limit of ₹10,000.");
+            setIsComplete(false);
           } else {
-            await createOnRampTransaction( "Axis Bank",numericAmount);
-            setIsComplete(true);
-            setMessage("Transaction completed successfully");
+            // Simulate processing delay
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Create and complete the transaction
+            const result = await createOnRampTransaction("Axis Bank", numericAmount);
+            
+            if (result.token) {
+              setIsComplete(true);
+              setMessage(`₹${numericAmount} has been successfully added to your account.`);
+              setTransactionId(`AXIS${result.token.toUpperCase()}`);
+            } else {
+              setIsComplete(false);
+              setMessage(result.message || "Transaction failed. Please try again.");
+            }
           }
         } else {
           setMessage("Invalid transaction amount.");
+          setIsComplete(false);
         }
       } catch (error) {
-        setMessage("Transaction failed. Please try again.");
+        console.error("Transaction error:", error);
+        setMessage("Transaction failed due to technical error. Please try again.");
+        setIsComplete(false);
       } finally {
         setIsLoading(false);
       }
     };
 
     processTransaction();
-  }, [createOnRampTransaction]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
@@ -61,11 +80,13 @@ export default function AxisTransactionPage() {
           </nav>
         </div>
       </header>
+      
       <main className="flex-grow container mx-auto mt-8 p-4 flex items-center justify-center">
         <div className="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
           <h1 className="text-2xl font-bold text-[#97144D] mb-6 text-center">
             Transaction Processing
           </h1>
+          
           {isLoading ? (
             <div className="flex flex-col items-center justify-center space-y-4 py-8">
               <Loader2 className="h-16 w-16 animate-spin text-[#97144D]" />
@@ -94,11 +115,15 @@ export default function AxisTransactionPage() {
               <h2 className="text-2xl font-bold text-green-600">
                 Transaction Successful!
               </h2>
-              <p className="text-lg">{message}</p>
+              <p className="text-lg text-gray-700">{message}</p>
               <p className="text-sm text-gray-600">
-                Transaction ID: AXIS
-                {Math.random().toString(36).substr(2, 9).toUpperCase()}
+                Transaction ID: {transactionId}
               </p>
+              <div className="mt-6 p-4 bg-green-50 rounded-lg">
+                <p className="text-sm text-green-800">
+                  Your account balance has been updated. You can close this window now.
+                </p>
+              </div>
             </div>
           ) : (
             <div className="text-center space-y-4 py-8">
@@ -118,14 +143,17 @@ export default function AxisTransactionPage() {
               <h2 className="text-2xl font-bold text-red-600">
                 Transaction Failed
               </h2>
-              <p className="text-lg">{message}</p>
-              <p className="text-sm text-gray-600">
-                Please try again or contact our customer support.
-              </p>
+              <p className="text-lg text-gray-700">{message}</p>
+              <div className="mt-6 p-4 bg-red-50 rounded-lg">
+                <p className="text-sm text-red-800">
+                  Please try again or contact customer support if the problem persists.
+                </p>
+              </div>
             </div>
           )}
         </div>
       </main>
+      
       <footer className="bg-[#97144D] text-white text-sm p-4 mt-8">
         <div className="container mx-auto text-center">
           © 2023 Axis Bank Ltd. All rights reserved. | Terms of Use | Privacy

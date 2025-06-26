@@ -94,11 +94,11 @@ export default async function DashboardPage() {
             </h2>
             <div className="flex items-baseline">
               <span className="text-4xl font-bold text-indigo-600">
-                ₹{(balance.amount / 100).toFixed(2)}
+                ₹{balance ? (balance.amount / 100).toFixed(2) : "0.00"}
               </span>
               <span className="ml-2 text-sm text-gray-500">Available</span>
             </div>
-            {balance.locked > 0 && (
+            {balance && balance.locked > 0 && (
               <div className="mt-2 text-sm text-gray-500 flex items-center">
                 <AlertCircle className="mr-1 h-4 w-4 text-yellow-500" />₹
                 {(balance.locked / 100).toFixed(2)} Locked

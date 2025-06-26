@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Card } from '@repo/ui/card';
 
-function OnRampTransaction  ({
+function OnrampTransaction  ({
   transactions=[],
   title = 'Recent Transactions',
 }: {
@@ -79,4 +79,4 @@ function OnRampTransaction  ({
   );
 };
 
-export default OnRampTransaction
+export default OnrampTransaction

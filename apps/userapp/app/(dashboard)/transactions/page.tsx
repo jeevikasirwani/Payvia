@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../lib/auth";
 import prisma from "@repo/db/client";
-import OnRampTransaction from "../../../components/OnRampTransaction";
+import OnRampTransaction from "../../../components/OnrampTransaction";
 import { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 
